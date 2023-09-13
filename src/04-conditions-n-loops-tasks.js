@@ -294,15 +294,10 @@ function reverseInteger(num) {
  *   4916123456789012 => false
  */
 function isCreditCardNumber(ccn) {
-  const ccnStr = ccn.toString().replace(/\s/g, '');
-
-  // if (ccnStr.length !== 16) {
-  //   return false;
-  // }
-
+  const ccnStr = ccn.toString();
   const digits = ccnStr.split('').map(Number);
 
-  for (let i = 0; i < digits.length; i += 2) {
+  for (let i = digits.length - 2; i >= 0; i -= 2) {
     digits[i] *= 2;
     if (digits[i] > 9) {
       digits[i] -= 9;
@@ -310,7 +305,6 @@ function isCreditCardNumber(ccn) {
   }
 
   const sum = digits.reduce((acc, curr) => acc + curr, 0);
-
   return sum % 10 === 0;
 }
 
@@ -433,25 +427,26 @@ function getCommonDirectoryPath(pathes) {
     return '';
   }
 
-  const pathParts = pathes.map((path) => path.split('/'));
-  const minLength = Math.min(...pathParts.map((parts) => parts.length));
+  const firstPathParts = pathes[0].split('/');
 
-  const commonPathParts = [];
+  let commonPath = '';
 
-  for (let i = 0; i < minLength; i += 1) {
-    const currentDir = pathParts[0][i];
-    const isCommon = pathParts.every((parts) => parts[i] === currentDir);
+  for (let i = 0; i < firstPathParts.length; i += 1) {
+    const currentPart = firstPathParts[i];
+
+    const isCommon = pathes.every((path) => {
+      const parts = path.split('/');
+      return parts[i] === currentPart;
+    });
 
     if (isCommon) {
-      commonPathParts.push(currentDir);
+      commonPath += `${currentPart}/`;
     } else {
       break;
     }
   }
 
-  const commonPath = commonPathParts.join('/');
-
-  return pathes[0].startsWith('/') ? `/${commonPath}/` : `${commonPath}/`;
+  return commonPath;
 }
 
 
